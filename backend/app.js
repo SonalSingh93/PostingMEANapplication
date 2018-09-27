@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-mongoose.connect("mongodb+srv://sonal:yymI5Mhr9ECXRWrM@cluster0-opklo.mongodb.net/test?retryWrites=true")
+mongoose.connect("mongodb+srv://sonal:yymI5Mhr9ECXRWrM@cluster0-opklo.mongodb.net/node-angular?retryWrites=true")
 .then(() => {
   console.log("connected to db");
 })
@@ -36,26 +36,16 @@ app.post('/api/posts' ,(req,res,next) =>
   });
 });
 
-app.use('/api/posts',(req,res,next) => {
-  const posts = [
-    {
-      id: "sjhfwau",
-      title: "first server side post",
-      content: "from server"
-    },
-    {
-      id: "shfwofa",
-      title: "second server side post",
-      content: "from server!"
-    }
-  ];
-  res.status(200).json(
-    {
-      message: "Posts fetched successfully",
-      posts: posts
-    }
+app.get('/api/posts',(req,res,next) => {
+  Post.find().then(documents => {
+    res.status(200).json(
+      {
+        message: "Posts fetched successfully",
+        posts: documents
+      }
 
-  );
+    );
+  });
 });
 
 module.exports = app;
