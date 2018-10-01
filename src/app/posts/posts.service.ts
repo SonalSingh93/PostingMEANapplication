@@ -16,7 +16,7 @@ export class PostsService {
         return postData.posts.map(post => {
           return {
             title: post.title,
-            content: post.conent,
+            content: post.content,
             id: post._id
           };
         });
@@ -25,6 +25,10 @@ export class PostsService {
         this.posts = transformedPosts;
         this.postsUpdated.next([...this.posts]);
     });
+  }
+
+  getPost(id: string) {
+    return {...this.posts.find(p => p.id === id)};
   }
 
   getPostsUpdatedListener() {
