@@ -1,3 +1,4 @@
+import { MatProgressSpinner } from '@angular/material';
 import { PostsService } from './../posts.service';
 import { Component, OnInit } from '@angular/core';
 import { Post } from '../post.model';
@@ -12,6 +13,7 @@ export class PostCreateComponent implements OnInit {
 
   enteredContent = '';
   enteredTitle = '';
+  isLoading = false;
   private mode = 'create';
   private postid: string;
   post: Post;
@@ -23,7 +25,9 @@ export class PostCreateComponent implements OnInit {
       if (paramMap.has('postid')) {
         this.mode = 'edit';
         this.postid = paramMap.get('postid');
+        this.isLoading = true;
         this.postsService.getPost(this.postid).subscribe(postData => {
+          this.isLoading = false;
           this.post = {id: postData._id , title: postData.title , content: postData.content};
         });
       } else {
@@ -37,6 +41,7 @@ export class PostCreateComponent implements OnInit {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;
     if (this.mode === 'create') {
       this.postsService.addPost(form.value.title, form.value.content);
     } else {
