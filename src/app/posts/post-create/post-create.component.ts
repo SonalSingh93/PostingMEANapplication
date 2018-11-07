@@ -2,9 +2,9 @@ import { Post } from './../post.model';
 import { MatProgressSpinner } from '@angular/material';
 import { PostsService } from './../posts.service';
 import { Component, OnInit } from '@angular/core';
-//import { Post } from '../post.model';
 import { NgForm, FormGroup, Validator, FormControl, Validators} from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { mimeType } from './mime-type.validator';
 @Component({
   selector: 'app-post-create',
   templateUrl: './post-create.component.html',
@@ -16,6 +16,7 @@ export class PostCreateComponent implements OnInit {
   enteredTitle = '';
   isLoading = false;
   form: FormGroup;
+  imagePreview: string;
   private mode = 'create';
   private postid: string;
   post: Post;
@@ -30,7 +31,10 @@ export class PostCreateComponent implements OnInit {
       'content' : new FormControl(null, {
         validators: [Validators.required]
       }),
-      'image' : new FormControl(null, {validators: [Validators.required]})
+      'image' : new FormControl(null, {
+        validators: [Validators.required],
+        asyncValidators : [mimeType]
+      })
     });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postid')) {
@@ -56,6 +60,12 @@ export class PostCreateComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files[0];
     this.form.patchValue({image : file});
     this.form.get('image').updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = <string>reader.result;
+    };
+    reader.readAsDataURL(file);
+    console.log(this.imagePreview);
   }
 
   onSavePost() {
